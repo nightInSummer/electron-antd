@@ -34,12 +34,13 @@ export default class Login extends Component {
             defaultValue={password}
             placeholder="密码"
             style={{ marginTop: 10 }}
-            onChange={(password) => this.setState({ password })}
+            onChange={(password) => {
+              console.log(password.target.value)
+              this.setState({ password: password.target.value })
+            }}
             onPressEnter={value => {
               this.setState({ loading: true });
-              setTimeout(() => {
-                this.login()
-              }, 1000);
+              this.login()
             }}
           />
 
@@ -61,9 +62,7 @@ export default class Login extends Component {
               loading={loading}
               onClick={() => {
                 this.setState({ loading: true });
-                setTimeout(() => {
-                  this.login()
-                }, 1000);
+                this.login()
               }}
             >
               登 录
@@ -77,14 +76,16 @@ export default class Login extends Component {
 
   login() {
     let { username, password } = this.state;
-    // if (!username || !password) {
-    //   message.error('用户名密码必填');
-    //   this.setState({ loading: false });
-    //   return;
-    // }
+    console.log(username, password)
+    if (username === 'admin' && password === 'admin123') {
+      this.setState({ loading: false });
+      message.success(`登录成功! 欢迎`);
+      // 跳转页面 可传递参数
+      this.props.router.push({ pathname: '/loggedin', state: { username, loggedIn: true } });
+    } else {
+      this.setState({ loading: false });
+      message.error('用户名或密码错误！');
+    }
 
-    message.success(`登录成功! 欢迎`);
-    // 跳转页面 可传递参数
-    this.props.router.push({ pathname: '/loggedin', state: { username, loggedIn: true } });
   }
 }
